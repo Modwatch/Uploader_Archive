@@ -1,0 +1,29 @@
+{
+  "name": "modwatch-uploader",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/modwatch.js",
+  "scripts": {
+    "start": "node dist/modwatch.js",
+    "build": "node scripts/build.js",
+    "dev": "npm run build && npm start"
+  },
+  "author": "Aaron Ballard",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Modwatch/Uploader.git"
+  },
+  "engines": {
+    "node": ">=5.10.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "rollup": "^0.25.8",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-commonjs": "^2.2.1",
+    "rollup-plugin-node-resolve": "^1.5.0"
+  },
+  "dependencies": {
+    "denodeify": "^1.2.1"
+  }
+}
