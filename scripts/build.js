@@ -2,6 +2,7 @@ const rollup = require("rollup");
 const nodeResolve = require("rollup-plugin-node-resolve");
 const babel = require("rollup-plugin-babel");
 const commonjs = require("rollup-plugin-commonjs");
+const rollupJSON = require("rollup-plugin-json");
 const chalk = require("chalk");
 const program = require("commander");
 const watch = require("watch");
@@ -59,6 +60,9 @@ function build() {
     onwarn: program.watch ? e => { spinner.text = e; } : undefined,
     plugins: [
       nodeResolve(),
+      rollupJSON({
+        include: "node_modules/iconv-lite/**"
+      }),
       commonjs(),
       babel({
         exclude: "node_modules/**",
