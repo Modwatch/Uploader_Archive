@@ -1,0 +1,9 @@
+# Modwatch
+skyrim.esm
+
+hearthfire.esm
+dragonborn.esm
+
+
+anotherlife.esp
+newhair.esp

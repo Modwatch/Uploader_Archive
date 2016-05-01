@@ -3,22 +3,81 @@ const nodeResolve = require("rollup-plugin-node-resolve");
 const babel = require("rollup-plugin-babel");
 const commonjs = require("rollup-plugin-commonjs");
 const chalk = require("chalk");
+const program = require("commander");
+const watch = require("watch");
+const ora = require("ora");
+const keypress = require("keypress");
 
-rollup.rollup({
-  entry: "src/entry.js",
-  plugins: [
-    nodeResolve(),
-    commonjs(),
-    babel({
-      exclude: "node_modules/**"
-    })
-  ]
-}).then(bundle => {
-  return bundle.write({
-    format: "cjs",
-    dest: "dist/modwatch.js"
-  });
-})
-.catch(e => {
-  console.log(chalk.red(e));
+program
+.option("-w, --watch [Directory]", "Watch for changes")
+.parse(process.argv);
+
+keypress(process.stdin);
+if(program.watch) {
+  const spinner = ora("Initial Build");
+  spinner.start();
+}
+
+build()
+.then(() => {
+  if(program.watch) {
+    spinner.text = "Built";
+  }
 });
+
+if(program.watch) {
+  watch.watchTree(program.watch, (f, curr, prev) => {
+    if (typeof f == "object" && prev === null && curr === null) {
+      // finished walking tree
+    } else {
+      spinner.text = "File changed, rebuilding...";
+      build()
+      .then(() => {
+        spinner.text = "Built";
+      });
+    }
+  });
+}
+
+if(program.watch) {
+  process.stdin.on("keypress", (ch, key) => {
+    if (key &&  key.name === "q") {
+      spinner.stop();
+      watch.unwatchTree(program.watch);
+      console.log(chalk.cyan("Cleanly stopped watch"));
+      process.exit(0);
+    }
+  });
+
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+}
+
+function build() {
+  return rollup.rollup({
+    entry: "src/cli.js",
+    onwarn: program.watch ? e => { spinner.text = e; } : undefined,
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      babel({
+        exclude: "node_modules/**",
+        babelrc: false,
+        presets: ["es2015-rollup"]
+      })
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      format: "cjs",
+      dest: "dist/cli.js"
+    });
+  })
+  .catch(e => {
+    if(program.watch) {
+      spinner.stop();
+      watch.unwatch(program.watch);
+    }
+    console.log(e);
+    process.exit(0);
+  });
+}

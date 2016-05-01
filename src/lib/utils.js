@@ -5,7 +5,7 @@ fs.readFile = denodeify(fs.readFile);
 fs.readdir = denodeify(fs.readdir);
 
 export function cleanModFile(opts = {}) {
-  return fs.readFile(path.resolve(opts.filepath), {encoding:"utf8"})
+  return fs.readFile(path.resolve(opts.filepath), { encoding: "utf8" })
   .then(content => ({
     content: content
       .split("\r\n")
@@ -17,18 +17,6 @@ export function cleanModFile(opts = {}) {
   }));
 }
 
-export function analyzeFile(opts = {}) {
-  let stats = {
-    content: opts.content
-  };
-  if(opts.game) {
-    stats.game = opts.content
-      .filter(line => line.toLowerCase().includes("skyrim"))
-      .length > 0 ? "skyrim" : undefined;
-  }
-  return Promise.resolve(stats);
-}
-
 export function scanModDirectory(opts = {}) {
   if(opts.modDirectory) {
     return fs.readdir(opts.modDirectory)
@@ -38,7 +26,7 @@ export function scanModDirectory(opts = {}) {
     )
   } else {
     return scanDefaultModDirectories({
-      game: "skyrim"
+      game: opts.game || "skyrim"
     });
   }
 }

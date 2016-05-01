@@ -1,0 +1,7 @@
+# Modwatch
+Fallout4.esm
+
+automatron.esm
+
+explosionsorwhatever.esp
+cryo-something.esp
