@@ -1,7 +1,8 @@
 import program from "commander";
 import chalk from "chalk";
 
-import { cleanModFile, scanModDirectory, getUsers, getUserFiles, getUserProfile, uploadMods } from "./lib/utils";
+import { cleanModFile, scanModDirectory } from "./lib/utils";
+import { getUsers, getUserFiles, getUserFile, getUserProfile, uploadMods } from "./lib/api";
 
 program
 .option("-d, --modDirectory [directory]", "Mod Directory")
@@ -11,6 +12,7 @@ program
 .option("-l, --listUsers <n>", "List `n` Users")
 .option("-r, --userProfile [username]", "Get User's Profile")
 .option("-f, --userFiles [username]", "Get User's File Names")
+.option("-t, --filetype [filetype]", "Get A Specific File By User")
 .option("-d, --upload", "Upload to Modwatch")
 .parse(process.argv);
 
@@ -44,6 +46,17 @@ if(program.listUsers) {
   .catch(e => {
     console.log(chalk.red("Error getting user files"));
   });
+} else if(program.filetype) {
+  getUserFile({
+    username: program.username,
+    filetype: program.filetype
+  })
+  .then(file => {
+    console.log(file);
+  })
+  .catch(e => {
+    console.log(chalk.red("Error getting user file"), e);
+  });
 } else if(program.upload) {
   if(!program.username || !program.password || !program.game) {
     console.log(chalk.red("Username, Password, and Game required for upload"));
@@ -59,7 +72,7 @@ if(program.listUsers) {
     }))
   ))
   .then(files => files.map(file => {
-    let obj = {};
+    const obj = {};
     obj[file.shortname] = file.content;
     return obj;
   }))
@@ -77,4 +90,6 @@ if(program.listUsers) {
   .catch(e => {
     console.log(chalk.red("Error getting/transforming/uploading mod files"));
   });
+} else {
+  console.log(chalk.red("Invalid arguments passed, taking no action"));
 }

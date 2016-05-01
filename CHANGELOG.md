@@ -1,5 +1,22 @@
 #Changelog
 
+### 0.0.2 (05/01/2016)
+
+**Features**
+
+- sourcemaps
+- minification option
+  - build scripts prints byte size
+- split api out into separate lib file
+- add getting single files to cli
+- linting
+  - only in `src`
+- added README content and gif
+
+**Bugs**
+
+- none
+
 ### 0.0.1 (05/01/2016)
 
 **Features**

@@ -1,0 +1,29 @@
+{
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  },
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "Promise": true
+  },
+  "rules": {
+    "no-console": 0,
+    "no-unused-vars": 0,
+    "no-undef": 1,
+    "prefer-template": 1,
+    "prefer-const": 1,
+    "no-var": 2,
+    "arrow-spacing": 1,
+    "no-trailing-spaces": 1,
+    "comma-spacing": [1, { "before": false, "after": true }],
+    "brace-style": 1,
+    "eqeqeq": 2
+  }
+}

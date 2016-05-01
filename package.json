@@ -1,15 +1,20 @@
 {
   "name": "modwatch-uploader",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "CLI for Modwatch",
   "main": "dist/cli.js",
   "scripts": {
-    "start": "node dist/cli.js",
     "build": "node scripts/build.js",
     "watch": "node scripts/build.js -w ./src",
+    "lint": "eslint ./src/",
     "dev": "npm run build && npm start",
-    "test": "ava ./tests/**/*Spec.js -v --require babel-register",
-    "test:watch": "npm run test -- --watch"
+    "test": "ava ./tests/*Spec.js ./tests/**/*Spec.js -v --require babel-register",
+    "test:watch": "npm run test -- --watch",
+    "prepublish": "npm run build -- -m"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "modwatch": "dist/cli.js"
   },
   "author": "Aaron Ballard",
   "repository": {
@@ -22,12 +27,14 @@
   "devDependencies": {
     "ava": "^0.14.0",
     "babel-preset-es2015-rollup": "^1.1.1",
+    "eslint": "^2.9.0",
     "ora": "^0.2.1",
     "rollup": "^0.25.8",
     "rollup-plugin-babel": "^2.4.0",
     "rollup-plugin-commonjs": "^2.2.1",
     "rollup-plugin-json": "^2.0.0",
     "rollup-plugin-node-resolve": "^1.5.0",
+    "uglify-js": "^2.6.2",
     "watch": "^0.18.0"
   },
   "dependencies": {

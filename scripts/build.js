@@ -3,14 +3,20 @@ const nodeResolve = require("rollup-plugin-node-resolve");
 const babel = require("rollup-plugin-babel");
 const commonjs = require("rollup-plugin-commonjs");
 const rollupJSON = require("rollup-plugin-json");
+const uglify = require("uglify-js");
 const chalk = require("chalk");
 const program = require("commander");
 const watch = require("watch");
 const ora = require("ora");
 const keypress = require("keypress");
+const fs = require("fs");
+const denodeify = require("denodeify");
+
+fs.writeFile = denodeify(fs.writeFile);
 
 program
 .option("-w, --watch [Directory]", "Watch for changes")
+.option("-m, --minify", "Minify")
 .parse(process.argv);
 
 keypress(process.stdin);
@@ -19,12 +25,7 @@ if(program.watch) {
   spinner.start();
 }
 
-build()
-.then(() => {
-  if(program.watch) {
-    spinner.text = "Built";
-  }
-});
+build();
 
 if(program.watch) {
   watch.watchTree(program.watch, (f, curr, prev) => {
@@ -33,9 +34,6 @@ if(program.watch) {
     } else {
       spinner.text = "File changed, rebuilding...";
       build()
-      .then(() => {
-        spinner.text = "Built";
-      });
     }
   });
 }
@@ -59,7 +57,9 @@ function build() {
     entry: "src/cli.js",
     onwarn: program.watch ? e => { spinner.text = e; } : undefined,
     plugins: [
-      nodeResolve(),
+      nodeResolve({
+        preferBuiltins: true
+      }),
       rollupJSON({
         include: "node_modules/iconv-lite/**"
       }),
@@ -70,18 +70,42 @@ function build() {
         presets: ["es2015-rollup"]
       })
     ]
-  }).then(bundle => {
-    return bundle.write({
-      format: "cjs",
-      dest: "dist/cli.js"
-    });
+  })
+  .then(bundle => bundle.generate({
+    sourceMap: true,
+    banner: "#! /usr/bin/env node",
+    format: "cjs"
+  }))
+  .then(obj => {
+    if(program.minify) {
+      return uglify.minify(obj.code, {
+        fromString: true,
+        screwIe8: true,
+        outSourceMap: "cli.js.map",
+        inSourceMap: obj.map
+      });
+    } else {
+      return obj;
+    }
+  })
+  .then(obj => Promise.all([
+    obj.code.length,
+    fs.writeFile("./dist/cli.js", obj.code),
+    fs.writeFile("./dist/cli.js.map", obj.map)
+  ]))
+  .then(stats => {
+    if(!program.watch) {
+      console.log(chalk.blue(`File size: ${stats[0]} bytes`));
+    } else {
+      spinner.text = `Built: File Size ${stats[0]} bytes`;
+    }
+    return stats;
   })
   .catch(e => {
     if(program.watch) {
-      spinner.stop();
-      watch.unwatch(program.watch);
+      spinner.text = chalk.red(e);
+    } else {
+      console.log(chalk.red(e));
     }
-    console.log(e);
-    process.exit(0);
   });
 }
