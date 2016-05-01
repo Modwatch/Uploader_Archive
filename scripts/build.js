@@ -54,8 +54,6 @@ var _denodeify = require("denodeify");
 
 var _denodeify2 = _interopRequireDefault(_denodeify);
 
-require("core-js/es6/promise");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _fs2.default.writeFile = (0, _denodeify2.default)(_fs2.default.writeFile);
@@ -63,6 +61,18 @@ _fs2.default.writeFile = (0, _denodeify2.default)(_fs2.default.writeFile);
 _commander2.default.option("-w, --watch [Directory]", "Watch for changes").option("-m, --minify", "Minify").parse(process.argv);
 
 var spinner = void 0;
+
+var banner = "#!/usr/bin/env node\n";
+
+if (typeof Promise === "undefined") {
+  banner = banner + "require(\"core-js/es6/promise\");\n";
+  require("core-js/es6/promise");
+}
+if (typeof "".includes === "undefined") {
+  banner = banner + "require(\"core-js/fn/string/includes\");\n";
+}
+
+console.log(banner);
 
 (0, _keypress2.default)(process.stdin);
 if (_commander2.default.watch) {
@@ -112,8 +122,8 @@ function build() {
     })]
   }).then(function (bundle) {
     return bundle.generate({
+      banner: banner,
       sourceMap: true,
-      banner: "#! /usr/bin/env node",
       format: "cjs"
     });
   }).then(function (obj) {
@@ -128,14 +138,16 @@ function build() {
       return obj;
     }
   }).then(function (obj) {
-    return Promise.all([obj.code.length, _fs2.default.writeFile("./dist/cli.js", obj.code), _fs2.default.writeFile("./dist/cli.js.map", obj.map)]);
-  }).then(function (stats) {
+    _fs2.default.writeFile("./dist/cli.js", obj.code);
+    _fs2.default.writeFile("./dist/cli.js.map", obj.map);
+    return obj.code.length;
+  }).then(function (filesize) {
     if (!_commander2.default.watch) {
-      console.log(_chalk2.default.blue("File size: " + stats[0] + " bytes"));
+      console.log(_chalk2.default.blue("File size: " + filesize + " bytes"));
     } else {
-      spinner.text = "Built: File Size " + stats[0] + " bytes";
+      spinner.text = "Built: File Size " + filesize + " bytes";
     }
-    return stats;
+    return filesize;
   }).catch(function (e) {
     if (_commander2.default.watch) {
       spinner.text = _chalk2.default.red(e);

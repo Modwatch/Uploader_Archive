@@ -1,8 +1,6 @@
 import path from "path";
 import fs from "fs";
 import denodeify from "denodeify";
-import "core-js/fn/string/includes";
-import "core-js/es6/promise";
 
 fs.readFile = denodeify(fs.readFile);
 fs.readdir = denodeify(fs.readdir);

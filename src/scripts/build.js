@@ -11,7 +11,6 @@ import ora from "ora";
 import keypress from "keypress";
 import fs from "fs";
 import denodeify from "denodeify";
-import "core-js/es6/promise";
 
 fs.writeFile = denodeify(fs.writeFile);
 
@@ -21,6 +20,16 @@ program
 .parse(process.argv);
 
 let spinner;
+
+let banner = "#!/usr/bin/env node\n";
+
+if(typeof Promise === "undefined") {
+  banner = `${banner}require("core-js/es6/promise");\n`;
+  require("core-js/es6/promise");
+}
+if(typeof "".includes === "undefined") {
+  banner = `${banner}require("core-js/fn/string/includes");\n`;
+}
 
 keypress(process.stdin);
 if(program.watch) {
@@ -78,8 +87,8 @@ function build() {
     ]
   })
   .then(bundle => bundle.generate({
+    banner,
     sourceMap: true,
-    banner: "#! /usr/bin/env node",
     format: "cjs"
   }))
   .then(obj => {
@@ -94,18 +103,18 @@ function build() {
       return obj;
     }
   })
-  .then(obj => Promise.all([
-    obj.code.length,
-    fs.writeFile("./dist/cli.js", obj.code),
-    fs.writeFile("./dist/cli.js.map", obj.map)
-  ]))
-  .then(stats => {
+  .then(obj => {
+    fs.writeFile("./dist/cli.js", obj.code);
+    fs.writeFile("./dist/cli.js.map", obj.map);
+    return obj.code.length;
+  })
+  .then(filesize => {
     if(!program.watch) {
-      console.log(chalk.blue(`File size: ${stats[0]} bytes`));
+      console.log(chalk.blue(`File size: ${filesize} bytes`));
     } else {
-      spinner.text = `Built: File Size ${stats[0]} bytes`;
+      spinner.text = `Built: File Size ${filesize} bytes`;
     }
-    return stats;
+    return filesize;
   })
   .catch(e => {
     if(program.watch) {
