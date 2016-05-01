@@ -1,16 +1,17 @@
-const rollup = require("rollup");
-const nodeResolve = require("rollup-plugin-node-resolve");
-const babel = require("rollup-plugin-babel");
-const commonjs = require("rollup-plugin-commonjs");
-const rollupJSON = require("rollup-plugin-json");
-const uglify = require("uglify-js");
-const chalk = require("chalk");
-const program = require("commander");
-const watch = require("watch");
-const ora = require("ora");
-const keypress = require("keypress");
-const fs = require("fs");
-const denodeify = require("denodeify");
+import rollup from "rollup";
+import nodeResolve from "rollup-plugin-node-resolve";
+import babel from "rollup-plugin-babel";
+import commonjs from "rollup-plugin-commonjs";
+import rollupJSON from "rollup-plugin-json";
+import uglify from "uglify-js";
+import chalk from "chalk";
+import program from "commander";
+import watch from "watch";
+import ora from "ora";
+import keypress from "keypress";
+import fs from "fs";
+import denodeify from "denodeify";
+import "core-js/es6/promise";
 
 fs.writeFile = denodeify(fs.writeFile);
 

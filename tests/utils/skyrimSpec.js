@@ -1,5 +1,5 @@
 import test from "ava";
-import { cleanModFile, analyzeFile, scanModDirectory } from "../../src/lib/utils";
+import { cleanModFile, scanModDirectory } from "../../src/lib/utils";
 
 test("analyzeFile returns correct skyrim filenames", async t => {
 	const plugins = cleanModFile({

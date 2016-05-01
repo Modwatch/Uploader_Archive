@@ -1,3 +1,4 @@
+import "core-js/es6/promise";
 import fetch from "node-fetch";
 
 const api = "https://modwatchapi-ansballard.rhcloud.com"

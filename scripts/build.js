@@ -2,36 +2,78 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var rollup = require("rollup");
-var nodeResolve = require("rollup-plugin-node-resolve");
-var babel = require("rollup-plugin-babel");
-var commonjs = require("rollup-plugin-commonjs");
-var rollupJSON = require("rollup-plugin-json");
-var uglify = require("uglify-js");
-var chalk = require("chalk");
-var program = require("commander");
-var watch = require("watch");
-var ora = require("ora");
-var keypress = require("keypress");
-var fs = require("fs");
-var denodeify = require("denodeify");
+var _rollup = require("rollup");
 
-fs.writeFile = denodeify(fs.writeFile);
+var _rollup2 = _interopRequireDefault(_rollup);
 
-program.option("-w, --watch [Directory]", "Watch for changes").option("-m, --minify", "Minify").parse(process.argv);
+var _rollupPluginNodeResolve = require("rollup-plugin-node-resolve");
+
+var _rollupPluginNodeResolve2 = _interopRequireDefault(_rollupPluginNodeResolve);
+
+var _rollupPluginBabel = require("rollup-plugin-babel");
+
+var _rollupPluginBabel2 = _interopRequireDefault(_rollupPluginBabel);
+
+var _rollupPluginCommonjs = require("rollup-plugin-commonjs");
+
+var _rollupPluginCommonjs2 = _interopRequireDefault(_rollupPluginCommonjs);
+
+var _rollupPluginJson = require("rollup-plugin-json");
+
+var _rollupPluginJson2 = _interopRequireDefault(_rollupPluginJson);
+
+var _uglifyJs = require("uglify-js");
+
+var _uglifyJs2 = _interopRequireDefault(_uglifyJs);
+
+var _chalk = require("chalk");
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
+var _commander = require("commander");
+
+var _commander2 = _interopRequireDefault(_commander);
+
+var _watch = require("watch");
+
+var _watch2 = _interopRequireDefault(_watch);
+
+var _ora = require("ora");
+
+var _ora2 = _interopRequireDefault(_ora);
+
+var _keypress = require("keypress");
+
+var _keypress2 = _interopRequireDefault(_keypress);
+
+var _fs = require("fs");
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _denodeify = require("denodeify");
+
+var _denodeify2 = _interopRequireDefault(_denodeify);
+
+require("core-js/es6/promise");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_fs2.default.writeFile = (0, _denodeify2.default)(_fs2.default.writeFile);
+
+_commander2.default.option("-w, --watch [Directory]", "Watch for changes").option("-m, --minify", "Minify").parse(process.argv);
 
 var spinner = void 0;
 
-keypress(process.stdin);
-if (program.watch) {
-  spinner = ora("Initial Build");
+(0, _keypress2.default)(process.stdin);
+if (_commander2.default.watch) {
+  spinner = (0, _ora2.default)("Initial Build");
   spinner.start();
 }
 
 build();
 
-if (program.watch) {
-  watch.watchTree(program.watch, function (f, curr, prev) {
+if (_commander2.default.watch) {
+  _watch2.default.watchTree(_commander2.default.watch, function (f, curr, prev) {
     if ((typeof f === "undefined" ? "undefined" : _typeof(f)) === "object" && prev === null && curr === null) {
       // finished walking tree
     } else {
@@ -41,12 +83,12 @@ if (program.watch) {
   });
 }
 
-if (program.watch) {
+if (_commander2.default.watch) {
   process.stdin.on("keypress", function (ch, key) {
     if (key && key.name === "q") {
       spinner.stop();
-      watch.unwatchTree(program.watch);
-      console.log(chalk.cyan("Cleanly stopped watch"));
+      _watch2.default.unwatchTree(_commander2.default.watch);
+      console.log(_chalk2.default.cyan("Cleanly stopped watch"));
       process.exit(0);
     }
   });
@@ -56,14 +98,14 @@ if (program.watch) {
 }
 
 function build() {
-  return rollup.rollup({
+  return _rollup2.default.rollup({
     entry: "src/cli.js",
-    onwarn: program.watch ? function (e) {
+    onwarn: _commander2.default.watch ? function (e) {
       spinner.text = e;
     } : undefined,
-    plugins: [nodeResolve({
+    plugins: [(0, _rollupPluginNodeResolve2.default)({
       preferBuiltins: true
-    }), rollupJSON(), commonjs(), babel({
+    }), (0, _rollupPluginJson2.default)(), (0, _rollupPluginCommonjs2.default)(), (0, _rollupPluginBabel2.default)({
       exclude: ["node_modules/**", "*.json"],
       babelrc: false,
       presets: ["es2015-rollup"]
@@ -75,8 +117,8 @@ function build() {
       format: "cjs"
     });
   }).then(function (obj) {
-    if (program.minify) {
-      return uglify.minify(obj.code, {
+    if (_commander2.default.minify) {
+      return _uglifyJs2.default.minify(obj.code, {
         fromString: true,
         screwIe8: true,
         outSourceMap: "cli.js.map",
@@ -86,19 +128,19 @@ function build() {
       return obj;
     }
   }).then(function (obj) {
-    return Promise.all([obj.code.length, fs.writeFile("./dist/cli.js", obj.code), fs.writeFile("./dist/cli.js.map", obj.map)]);
+    return Promise.all([obj.code.length, _fs2.default.writeFile("./dist/cli.js", obj.code), _fs2.default.writeFile("./dist/cli.js.map", obj.map)]);
   }).then(function (stats) {
-    if (!program.watch) {
-      console.log(chalk.blue("File size: " + stats[0] + " bytes"));
+    if (!_commander2.default.watch) {
+      console.log(_chalk2.default.blue("File size: " + stats[0] + " bytes"));
     } else {
       spinner.text = "Built: File Size " + stats[0] + " bytes";
     }
     return stats;
   }).catch(function (e) {
-    if (program.watch) {
-      spinner.text = chalk.red(e);
+    if (_commander2.default.watch) {
+      spinner.text = _chalk2.default.red(e);
     } else {
-      console.log(chalk.red(e));
+      console.log(_chalk2.default.red(e));
     }
   });
 }
