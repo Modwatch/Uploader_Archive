@@ -23,7 +23,7 @@ test.before(() => {
 	});
 });
 
-test.only("Get Users", async t => {
+test("Get Users", async t => {
 	const p1 = getUsers({
 		api: "http://localhost:3000"
 	})
