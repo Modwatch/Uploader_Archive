@@ -35,6 +35,27 @@ export function getUserProfile(opts = {}) {
   .then(response => response.json())
 }
 
+export function checkToken(opts = {}) {
+  if(!opts.token) {
+    return Promise.reject("Token Required");
+  }
+  return fetch(`${opts.api || api}/auth/checktoken`, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      token: opts.token
+    })
+  })
+  .then(res => {
+    console.log(res);
+    return res;
+  })
+  .then(response => response.json())
+}
+
 export function uploadMods(opts = {}) {
   if(!opts.username || !opts.password) {
     return Promise.reject("Username/Password Required");

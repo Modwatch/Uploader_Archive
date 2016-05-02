@@ -1,6 +1,6 @@
 import test from "ava";
 import express from "express";
-import { getUsers, getUserFiles, getUserFile, getUserProfile, uploadMods } from "../src/lib/api";
+import { getUsers, getUserFiles, getUserFile, getUserProfile, uploadMods, checkToken } from "../src/lib/api";
 import { promiseLog } from "../src/lib/utils";
 
 const NUMBEROFUSERS = 20;
@@ -33,10 +33,11 @@ const PREFSINI = [
 	"Second Line=13",
 	"Third Line=something"
 ];
+const TOKEN = "12345";
+const USERNAME = "Peanut";
 
 test.before(() => {
-	let app = express();
-	app.get("/api/users/list", (req, res) => {
+	express().get("/api/users/list", (req, res) => {
 		let users = [];
 		for(let i = 0; i < NUMBEROFUSERS; i++) {
 			users.push({
@@ -46,29 +47,38 @@ test.before(() => {
 			});
 		}
 		res.json(users);
-	});
-	app.get("/api/user/:username/profile", (req, res) => {
+	})
+	.get("/api/user/:username/profile", (req, res) => {
 		res.json(PROFILE);
-	});
-	app.get("/api/user/:username/files", (req, res) => {
+	}).get("/api/user/:username/files", (req, res) => {
 		res.json(FILES);
-	});
-	app.get("/api/user/:username/file/plugins", (req, res) => {
+	}).get("/api/user/:username/file/plugins", (req, res) => {
 		res.json(PLUGINS);
-	});
-	app.get("/api/user/:username/file/ini", (req, res) => {
+	}).get("/api/user/:username/file/ini", (req, res) => {
 		res.json(INI);
-	});
-	app.get("/api/user/:username/file/prefsini", (req, res) => {
+	}).get("/api/user/:username/file/prefsini", (req, res) => {
 		res.json(PREFSINI);
-	});
-	app.post("/loadorder", (req, res) => {
+	}).post("/auth/checktoken", (req, res) => {
+		if(req.body.token === TOKEN) {
+			res.json({
+				username: USERNAME
+			});
+		} else {
+			res.sendStatus(403);
+		}
+	}).post("/auth/signin", (req, res) => {
 		res.status(200);
 		res.end();
-	});
-	app.listen(3000, () => {
-		console.log("Test Server Started");
-	});
+	}).post("/api/newTag/:username", (req, res) => {
+		res.status(200);
+		res.end();
+	}).post("/api/newENB/:username", (req, res) => {
+		res.status(200);
+		res.end();
+	}).post("/loadorder", (req, res) => {
+		res.status(200);
+		res.end();
+	}).listen(3000);
 });
 
 test("Get Users", async t => {
@@ -122,6 +132,26 @@ test("Get User File Contents", async t => {
 	})
 	t.deepEqual(await p3, PREFSINI);
 });
+
+test.skip("Check Token", async t => {
+	const p1 = checkToken({
+		api: "http://localhost:3000",
+		token: TOKEN
+	})
+	.then(res => res.username)
+	t.is(await p1, USERNAME);
+	
+	const p2 = checkToken({
+		api: "http://localhost:3000",
+		token: "Wrong Token"
+	})
+	.then(res => res.status)
+	t.is(await p2, 403);
+});
+test.todo("Sign In");
+test.todo("New Tag");
+test.todo("New ENB");
+test.todo("Remove User");
 
 test("Upload", async t => {
 	const p = uploadMods({
