@@ -54,6 +54,8 @@ var _denodeify = require("denodeify");
 
 var _denodeify2 = _interopRequireDefault(_denodeify);
 
+require("core-js/es6/promise");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _fs2.default.writeFile = (0, _denodeify2.default)(_fs2.default.writeFile);
@@ -61,98 +63,87 @@ _fs2.default.writeFile = (0, _denodeify2.default)(_fs2.default.writeFile);
 _commander2.default.option("-w, --watch [Directory]", "Watch for changes").option("-m, --minify", "Minify").parse(process.argv);
 
 var spinner = void 0;
-
 var banner = "#!/usr/bin/env node\n";
-
-if (typeof Promise === "undefined") {
-  banner = banner + "require(\"core-js/es6/promise\");\n";
-  require("core-js/es6/promise");
-}
-if (typeof "".includes === "undefined") {
-  banner = banner + "require(\"core-js/fn/string/includes\");\n";
-}
-
-console.log(banner);
 
 (0, _keypress2.default)(process.stdin);
 if (_commander2.default.watch) {
-  spinner = (0, _ora2.default)("Initial Build");
-  spinner.start();
+	spinner = (0, _ora2.default)("Initial Build");
+	spinner.start();
 }
 
 build();
 
 if (_commander2.default.watch) {
-  _watch2.default.watchTree(_commander2.default.watch, function (f, curr, prev) {
-    if ((typeof f === "undefined" ? "undefined" : _typeof(f)) === "object" && prev === null && curr === null) {
-      // finished walking tree
-    } else {
-        spinner.text = "File changed, rebuilding...";
-        build();
-      }
-  });
+	_watch2.default.watchTree(_commander2.default.watch, function (f, curr, prev) {
+		if ((typeof f === "undefined" ? "undefined" : _typeof(f)) === "object" && prev === null && curr === null) {
+			// finished walking tree
+		} else {
+				spinner.text = "File changed, rebuilding...";
+				build();
+			}
+	});
 }
 
 if (_commander2.default.watch) {
-  process.stdin.on("keypress", function (ch, key) {
-    if (key && key.name === "q") {
-      spinner.stop();
-      _watch2.default.unwatchTree(_commander2.default.watch);
-      console.log(_chalk2.default.cyan("Cleanly stopped watch"));
-      process.exit(0);
-    }
-  });
+	process.stdin.on("keypress", function (ch, key) {
+		if (key && key.name === "q") {
+			spinner.stop();
+			_watch2.default.unwatchTree(_commander2.default.watch);
+			console.log(_chalk2.default.cyan("Cleanly stopped watch"));
+			process.exit(0);
+		}
+	});
 
-  process.stdin.setRawMode(true);
-  process.stdin.resume();
+	process.stdin.setRawMode(true);
+	process.stdin.resume();
 }
 
 function build() {
-  return _rollup2.default.rollup({
-    entry: "src/cli.js",
-    onwarn: _commander2.default.watch ? function (e) {
-      spinner.text = e;
-    } : undefined,
-    plugins: [(0, _rollupPluginNodeResolve2.default)({
-      preferBuiltins: true
-    }), (0, _rollupPluginJson2.default)(), (0, _rollupPluginCommonjs2.default)(), (0, _rollupPluginBabel2.default)({
-      exclude: ["node_modules/**", "*.json"],
-      babelrc: false,
-      presets: ["es2015-rollup"]
-    })]
-  }).then(function (bundle) {
-    return bundle.generate({
-      banner: banner,
-      sourceMap: true,
-      format: "cjs"
-    });
-  }).then(function (obj) {
-    if (_commander2.default.minify) {
-      return _uglifyJs2.default.minify(obj.code, {
-        fromString: true,
-        screwIe8: true,
-        outSourceMap: "cli.js.map",
-        inSourceMap: obj.map
-      });
-    } else {
-      return obj;
-    }
-  }).then(function (obj) {
-    _fs2.default.writeFile("./dist/cli.js", obj.code);
-    _fs2.default.writeFile("./dist/cli.js.map", obj.map);
-    return obj.code.length;
-  }).then(function (filesize) {
-    if (!_commander2.default.watch) {
-      console.log(_chalk2.default.blue("File size: " + filesize + " bytes"));
-    } else {
-      spinner.text = "Built: File Size " + filesize + " bytes";
-    }
-    return filesize;
-  }).catch(function (e) {
-    if (_commander2.default.watch) {
-      spinner.text = _chalk2.default.red(e);
-    } else {
-      console.log(_chalk2.default.red(e));
-    }
-  });
+	return _rollup2.default.rollup({
+		entry: "src/cli.js",
+		onwarn: _commander2.default.watch ? function (e) {
+			spinner.text = e;
+		} : undefined,
+		plugins: [(0, _rollupPluginNodeResolve2.default)({
+			preferBuiltins: true
+		}), (0, _rollupPluginJson2.default)(), (0, _rollupPluginCommonjs2.default)(), (0, _rollupPluginBabel2.default)({
+			exclude: ["node_modules/**", "*.json"],
+			babelrc: false,
+			presets: ["es2015-rollup"]
+		})]
+	}).then(function (bundle) {
+		return bundle.generate({
+			banner: banner,
+			sourceMap: true,
+			format: "cjs"
+		});
+	}).then(function (obj) {
+		if (_commander2.default.minify) {
+			return _uglifyJs2.default.minify(obj.code, {
+				fromString: true,
+				screwIe8: true,
+				outSourceMap: "cli.js.map",
+				inSourceMap: obj.map
+			});
+		} else {
+			return obj;
+		}
+	}).then(function (obj) {
+		_fs2.default.writeFile("./dist/cli.js", obj.code);
+		_fs2.default.writeFile("./dist/cli.js.map", obj.map);
+		return obj.code.length;
+	}).then(function (filesize) {
+		if (!_commander2.default.watch) {
+			console.log(_chalk2.default.blue("File size: " + filesize + " bytes"));
+		} else {
+			spinner.text = "Built: File Size " + filesize + " bytes";
+		}
+		return filesize;
+	}).catch(function (e) {
+		if (_commander2.default.watch) {
+			spinner.text = _chalk2.default.red(e);
+		} else {
+			console.log(_chalk2.default.red(e));
+		}
+	});
 }

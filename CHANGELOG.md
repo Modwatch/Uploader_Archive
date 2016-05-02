@@ -12,10 +12,11 @@
 - linting
   - only in `src`
 - added README content and gif
+- Local server for API testing
 
 **Bugs**
 
-- none
+- fixed build on Node < 4
 
 ### 0.0.1 (05/01/2016)
 
