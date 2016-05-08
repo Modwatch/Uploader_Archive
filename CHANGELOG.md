@@ -1,5 +1,16 @@
 #Changelog
 
+### 0.0.3 (05/07/2016)
+
+**Features**
+
+- more unit tests for fallout versions
+- specified parsed files for unit tests
+
+**Bugs**
+
+- none
+
 ### 0.0.2 (05/01/2016)
 
 **Features**

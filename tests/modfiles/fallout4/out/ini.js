@@ -1,4 +1,4 @@
-export default const ini = [
+export default [
   "[General]",
   "sLanguage=en",
   "uGridsToLoad=5",

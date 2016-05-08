@@ -1,4 +1,4 @@
-export default const prefsini = [
+export default [
   "[General]",
   "SStartingCell=",
   "SCharGenQuest=00102037",
@@ -788,5 +788,5 @@ export default const prefsini = [
   "bDoDepthOfField=0",
   "[Launcher]",
   "bShowAllResolutions=1",
-  "uLastAspectRatio=3  "
+  "uLastAspectRatio=3"
 ];

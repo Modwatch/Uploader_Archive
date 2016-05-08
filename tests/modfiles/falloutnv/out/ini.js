@@ -1,4 +1,4 @@
-export default const ini = [
+export default [
   "[General]",
   "SStartingCell=",
   "SCharGenQuest=00102037",
@@ -15,8 +15,8 @@ export default const ini = [
   "STestFile3=",
   "STestFile2=",
   "STestFile1=FalloutNV.esm",
-  "sEssentialFileCacheList=Data\\Fallout.esm|Data2\\Fallout.esm, Data\Music\Special\\MainTitle.mp3, Data\\Fallout - Sound.bsa|Fallout - Sound.bsa, Data\\Fallout - Voices1.bsa|Fallout - Voices1.bsa",
-  "sUnessentialFileCacheList=Data\\Fallout - Meshes.bsa|Data2\\Fallout - Meshes.bsa, Data\\Fallout - Textures.bsa|Data2\\Fallout - Textures.bsa, Data\\Fallout - Textures2.bsa, Data\\Music\\Dungeon\\*.xma, Data\\Music\\Base\*.mp3, Data\\Music\\Battle\\*.mp3, Data\\Music\\Explore\\*.mp3, Data\\Music\\Public\\*.mp3, Data\\Music\\Special\\*.mp3",
+  "sEssentialFileCacheList=Data\\Fallout.esm|Data2\\Fallout.esm, Data\\Music\\Special\\MainTitle.mp3, Data\\Fallout - Sound.bsa|Fallout - Sound.bsa, Data\\Fallout - Voices1.bsa|Fallout - Voices1.bsa",
+  "sUnessentialFileCacheList=Data\\Fallout - Meshes.bsa|Data2\\Fallout - Meshes.bsa, Data\\Fallout - Textures.bsa|Data2\\Fallout - Textures.bsa, Data\\Fallout - Textures2.bsa, Data\\Music\\Dungeon\\*.xma, Data\\Music\\Base\\*.mp3, Data\\Music\\Battle\\*.mp3, Data\\Music\\Explore\\*.mp3, Data\\Music\\Public\\*.mp3, Data\\Music\\Special\\*.mp3",
   "bPreCullActors=1",
   "bTaskletActorSceneGraphUpdates=0",
   "bTaskletActorAnimMovementUpdates=1",

@@ -1,4 +1,4 @@
-export default const ini = [
+export default [
   "[General]",
   "SStartingCell=",
   "SCharGenQuest=0001f388",

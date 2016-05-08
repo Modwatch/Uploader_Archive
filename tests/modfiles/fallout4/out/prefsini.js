@@ -1,4 +1,4 @@
-export default const prefsini = [
+export default [
   "[Display]",
   "flocalShadowMapHalveEveryXUnit=750.0000",
   "focusShadowMapDoubleEveryXUnit=450.0000",

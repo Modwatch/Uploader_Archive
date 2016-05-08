@@ -22,8 +22,8 @@ export function cleanModFile(opts = {}) {
         .filter(line => line.trim() !== "")
         .filter(line => line.indexOf("#") !== 0)
         .map(line => line
-          .replace("\\", "\\\\")
-          .replace("\"", "\\\"")
+          .replace(/\\/g, "\\")
+          .replace(/"/g, "\"")
         ),
       filename,
       shortname: filename.includes("ini") ? (filename.includes("prefs") ? "prefsini" : "ini") : filename.split(".")[0]
