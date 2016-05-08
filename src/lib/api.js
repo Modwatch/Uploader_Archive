@@ -24,7 +24,7 @@ export function getUserFile(opts = {}) {
     return Promise.reject("Username/File Type Required");
   }
   return fetch(`${opts.api || api}/api/user/${opts.username}/file/${opts.filetype}`)
-  .then(response => response.json())
+  .then(response => response.json());
 }
 
 export function getUserProfile(opts = {}) {
@@ -32,7 +32,24 @@ export function getUserProfile(opts = {}) {
     return Promise.reject("Username Required");
   }
   return fetch(`${opts.api || api}/api/user/${opts.username}/profile`)
-  .then(response => response.json())
+  .then(response => response.json());
+}
+
+export function deleteUser(opts = {}) {
+  console.log(opts);
+  if(!opts.username || !opts.password) {
+    return Promise.reject("Username/Password Required");
+  }
+  return fetch(`${opts.api || api}/api/user/${opts.username}/delete`, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "password": opts.password
+    })
+  });
 }
 
 export function checkToken(opts = {}) {
