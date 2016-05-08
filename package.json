@@ -47,6 +47,7 @@
     "commander": "^2.9.0",
     "core-js": "^2.3.0",
     "denodeify": "^1.2.1",
+    "jsondiffpatch": "^0.1.43",
     "keypress": "^0.2.1",
     "node-fetch": "^1.5.1"
   }
