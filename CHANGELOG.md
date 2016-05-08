@@ -17,6 +17,7 @@
 **Bugs**
 
 - fixed build on Node < 4
+- added Object.assign polyfill for 0.10
 
 ### 0.0.1 (05/01/2016)
 

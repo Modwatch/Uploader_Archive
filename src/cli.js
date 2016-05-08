@@ -1,3 +1,4 @@
+import "core-js/fn/object/assign";
 import program from "commander";
 import chalk from "chalk";
 
