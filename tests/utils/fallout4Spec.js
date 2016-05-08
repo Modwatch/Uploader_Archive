@@ -1,7 +1,7 @@
 import test from "ava";
 import { cleanModFile, analyzeFile, scanModDirectory } from "../../src/lib/utils";
 
-test("analyzeFile returns correct fallout4 filenames", async t => {
+test.skip("analyzeFile returns correct fallout4 filenames", async t => {
 	const plugins = cleanModFile({
 		filepath: "../modfiles/fallout4/in/plugins.txt"
 	}).then(m => m.filename);
@@ -23,7 +23,7 @@ test("analyzeFile returns correct fallout4 filenames", async t => {
 	t.is(await fallout4Prefs, "fallout4prefs.ini");
 });
 
-test("analyzeFile returns correct fallout4 file lengths", async t => {
+test.skip("analyzeFile returns correct fallout4 file lengths", async t => {
 	const plugins = cleanModFile({
 		filepath: "../modfiles/fallout4/in/plugins.txt"
 	}).then(m => m.content.length);

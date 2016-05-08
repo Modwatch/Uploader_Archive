@@ -20,7 +20,11 @@ export function cleanModFile(opts = {}) {
         .join("\n")
         .split("\n")
         .filter(line => line.trim() !== "")
-        .filter(line => line.indexOf("#") !== 0),
+        .filter(line => line.indexOf("#") !== 0)
+        .map(line => line
+          .replace("\\", "\\\\")
+          .replace("\"", "\\\"")
+        ),
       filename,
       shortname: filename.includes("ini") ? (filename.includes("prefs") ? "prefsini" : "ini") : filename.split(".")[0]
     };
