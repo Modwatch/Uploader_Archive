@@ -3,7 +3,6 @@ import "core-js/es6/promise";
 import path from "path";
 import fs from "fs";
 import denodeify from "denodeify";
-import { diff, unpatch } from "jsondiffpatch";
 
 fs.readFile = denodeify(fs.readFile);
 fs.readdir = denodeify(fs.readdir);
@@ -30,20 +29,6 @@ export function cleanModFile(opts = {}) {
       shortname: filename.includes("ini") ? (filename.includes("prefs") ? "prefsini" : "ini") : filename.split(".")[0]
     };
   });
-}
-
-export function diffModFile(opts = {}) {
-  if(!opts.content || !opts.original) {
-    return Promise.reject("Need 2 arrays to compare");
-  }
-  return Promise.resolve(diff(opts.content, opts.original));
-}
-
-export function patchModFile(opts = {}) {
-  if(!opts.delta || !opts.original) {
-    return Promise.reject("Need 2 arrays to compare");
-  }
-  return Promise.resolve(unpatch(opts.original, opts.delta));
 }
 
 export function scanModDirectory(opts = {}) {

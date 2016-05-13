@@ -2,6 +2,7 @@ import "core-js/fn/object/assign";
 import program from "commander";
 import chalk from "chalk";
 
+import { diffModFile, patchModFile } from "modwatchdiffs";
 import { cleanModFile, scanModDirectory } from "./lib/utils";
 import { getUsers, getUserFiles, getUserFile, getUserProfile, deleteUser, uploadMods } from "./lib/api";
 
